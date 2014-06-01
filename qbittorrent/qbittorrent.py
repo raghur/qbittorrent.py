@@ -20,6 +20,16 @@ class QBitTorrent(object):
         self._url = url
         self._auth = HTTPDigestAuth(self._user, self._password)
 
+    def __POST(self,  url, **kwargs):
+        """@todo: Docstring for __POST.
+
+        :**kwargs: @todo
+        :returns: @todo
+
+        """
+        url = urlparse.urljoin(self._url, url)
+        r = requests.post(url, kwargs, auth=self._auth)
+
     def __GET(self, url):
         """@todo: Docstring for getRequest.
 
@@ -32,12 +42,29 @@ class QBitTorrent(object):
         r.raise_for_status()
         return r.json()
 
-    def getTorrentList(self):
+    def resume(self, hash):
+        """@todo: Docstring for resume.
+
+        :hash: @todo
+        :returns: @todo
+
+        """
+        return __POST("/command/resume", hash=hash)
+
+    def getTorrents(self, filter = None):
         """@todo: Docstring for getTorrentList.
         :returns: @todo
 
         """
-        return self.__GET("/json/torrents")
+        l = self.__GET("/json/torrents")
+        if callable(filter):
+            return itertools.ifilter(filter, l)
+        elif isinstance(filter, str):
+            return itertools.ifilter(lambda x: x["state"] == filter, l)
+        elif isinstance(filter, tuple):
+            return itertools.ifilter(lambda x: x[filter[0]] == filter[1], l)
+        else:
+            return l
 
     def hasActiveDownloads(self):
         """@todo: Docstring for hasActiveDownloads.
@@ -45,12 +72,20 @@ class QBitTorrent(object):
 
         """
         try:
-            r = self.getTorrentList()
-            f = itertools.ifilter(lambda o: o["state"] == 'downloading', r)
+            f = self.getTorrents('downloading')
             next(f)
             return True
         except StopIteration, e:
             return False
+
+    def resumeDownloads(self):
+        """@todo: Docstring for resumeDownloads.
+        :returns: @todo
+
+        """
+        pausedDls = self.getTorrents('pausedDL')
+        for torrent in pausedDls:
+            self.resume(torrent.hash)
 
 if __name__ == '__main__':
     qb = QBitTorrent("admin", "adminadmin")
