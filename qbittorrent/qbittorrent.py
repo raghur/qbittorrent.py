@@ -3,11 +3,12 @@ from requests.auth import HTTPDigestAuth
 import urlparse
 import itertools
 
+
 class QBitTorrent(object):
 
     """Docstring for QBitTorrent. """
 
-    def __init__(self, user, password, url = "http://localhost:8080"):
+    def __init__(self, user, password, url="http://localhost:8080"):
         """@todo: to be defined1.
 
         :user: @todo
@@ -20,7 +21,7 @@ class QBitTorrent(object):
         self._url = url
         self._auth = HTTPDigestAuth(self._user, self._password)
 
-    def __POST(self,  url, **kwargs):
+    def __POST__(self,  url, **kwargs):
         """@todo: Docstring for __POST.
 
         :**kwargs: @todo
@@ -30,7 +31,7 @@ class QBitTorrent(object):
         url = urlparse.urljoin(self._url, url)
         r = requests.post(url, kwargs, auth=self._auth)
 
-    def __GET(self, url):
+    def __GET__(self, url):
         """@todo: Docstring for getRequest.
 
         :url: @todo
@@ -38,7 +39,7 @@ class QBitTorrent(object):
 
         """
         url = urlparse.urljoin(self._url, url)
-        r = requests.get(url, auth = self._auth )
+        r = requests.get(url, auth=self._auth)
         r.raise_for_status()
         return r.json()
 
@@ -49,14 +50,14 @@ class QBitTorrent(object):
         :returns: @todo
 
         """
-        return __POST("/command/resume", hash=hash)
+        return self.__POST__("/command/resume", hash=hash)
 
-    def getTorrents(self, filter = None):
+    def getTorrents(self, filter=None):
         """@todo: Docstring for getTorrentList.
         :returns: @todo
 
         """
-        l = self.__GET("/json/torrents")
+        l = self.__GET__("/json/torrents")
         if callable(filter):
             return itertools.ifilter(filter, l)
         elif isinstance(filter, str):
