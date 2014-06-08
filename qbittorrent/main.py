@@ -6,11 +6,15 @@ import requests
 
 import logging
 logger = logging.getLogger()
-logging.basicConfig(format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
-                    datefmt='%m-%d %H:%M',)
+logging.basicConfig(
+    format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
+    datefmt='%m-%d %H:%M',)
+
+
 def parse_args(argv):
-    parser = argparse.ArgumentParser(description = """CLI remote control app for qbittorrent""",
-                                     fromfile_prefix_chars='@')
+    parser = argparse.ArgumentParser(
+        description="""CLI remote control app for qbittorrent""",
+        fromfile_prefix_chars='@')
     parser.add_argument('-s',
                         '--server',
                         dest='host',
@@ -49,7 +53,7 @@ def parse_args(argv):
     parser.add_argument("-v",
                         "--verbose",
                         help="Log level: INFO,DEBUG,CRITICAL,WARNING",
-                        dest = "verbosity",
+                        dest="verbosity",
                         default="INFO")
     config = os.path.expanduser("~/.qbittorrent.py")
     if (os.path.exists(config)):
@@ -76,12 +80,12 @@ def main(sysargv=sys.argv):
 
     """
     args = parse_args(sysargv[1:])
-    qb = qbittorrent.QBitTorrent(args.user, args.password)
+    qb = qbittorrent.QBitTorrent(args.user, args.password, args.host, args.port)
     try:
         print "List of torrents: ", qb.getTorrents()
         print "Active downloads: ", qb.activeDownloads()
         return 0
-    except requests.ConnectionError,e:
+    except requests.ConnectionError, e:
         print e
         return -1
 

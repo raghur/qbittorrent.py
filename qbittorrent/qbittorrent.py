@@ -13,7 +13,7 @@ class QBitTorrent(object):
 
     """Docstring for QBitTorrent. """
 
-    def __init__(self, user, password, url="http://localhost:8080"):
+    def __init__(self, user, password, host="localhost", port=8080):
         """@todo: to be defined1.
 
         :user: @todo
@@ -23,7 +23,7 @@ class QBitTorrent(object):
         """
         self._user = user
         self._password = password
-        self._url = url
+        self._url = "http://%s:%s" % (host, port)
         self._auth = HTTPDigestAuth(self._user, self._password)
 
     def __POST__(self,  url, **kwargs):
