@@ -34,22 +34,6 @@ def parse_args(argv):
                         dest='password',
                         default="adminadmin",
                         help="password")
-    #parser.add_argument('-t',
-                        #'--token',
-                        #dest='token',
-                        #help="OAuth Token",
-                        #required=True)
-    #parser.add_argument('-r',
-                        #'--repository',
-                        #dest='repository',
-                        #help="Repository in 'owner/repo' format")
-    #parser.add_argument('-c',
-                        #'--commit',
-                        #dest='commit',
-                        #help="commit SHA (usually first 5 chars are sufficient)")
-    #parser.add_argument('recipients',
-                        #nargs="+",
-                        #help="Recipient email address(es)")
     parser.add_argument("-v",
                         "--verbose",
                         help="Log level: INFO,DEBUG,CRITICAL,WARNING",
