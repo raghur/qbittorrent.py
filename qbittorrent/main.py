@@ -56,14 +56,14 @@ def parse_args(argv):
     return args
 
 
-def main(sysargv=sys.argv):
+def main(arglist):
     """@todo: Docstring for main.
 
     :sysargv: @todo
     :returns: @todo
 
     """
-    args = parse_args(sysargv[1:])
+    args = parse_args(arglist)
     qb = qbittorrent.QBitTorrent(args.user, args.password, args.host, args.port)
     try:
         print "List of torrents: ", qb.getTorrents()
@@ -74,5 +74,5 @@ def main(sysargv=sys.argv):
         return -1
 
 if __name__ == '__main__':
-    v = main()
+    v = main(sys.argv[1:])
     exit(v)
