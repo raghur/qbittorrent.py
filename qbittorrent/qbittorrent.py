@@ -5,6 +5,7 @@ import itertools
 import logging
 logger = logging.getLogger()
 
+
 def generator_len(gen):
     return sum(1 for _ in gen)
 
@@ -26,7 +27,7 @@ class QBitTorrent(object):
         self._url = "http://%s:%s" % (host, port)
         self._auth = HTTPDigestAuth(self._user, self._password)
 
-    def __POST__(self,  url, **kwargs):
+    def __POST__(self, url, **kwargs):
         """@todo: Docstring for __POST.
 
         :**kwargs: @todo
@@ -35,7 +36,7 @@ class QBitTorrent(object):
         """
         url = urlparse.urljoin(self._url, url)
         logger.debug("POST: %s", url)
-        r = requests.post(url, kwargs, auth=self._auth)
+        requests.post(url, kwargs, auth=self._auth)
 
     def __GET__(self, url):
         """@todo: Docstring for getRequest.
@@ -82,7 +83,7 @@ class QBitTorrent(object):
         try:
             f = self.getTorrents('downloading')
             return generator_len(f)
-        except StopIteration, e:
+        except StopIteration:
             return 0
 
     def resumeDownloads(self):

@@ -1,2 +1,2 @@
-#from qbittorrent import QBitTorrent
-#import main.main as qbittorrent-cli
+# from qbittorrent import QBitTorrent
+# import main.main as qbittorrent-cli

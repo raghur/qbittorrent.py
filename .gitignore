@@ -5,3 +5,4 @@ ENV
 _virtualenv/
 coverage
 *.egg-info/
+.tox/

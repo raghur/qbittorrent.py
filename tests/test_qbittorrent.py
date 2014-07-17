@@ -1,5 +1,5 @@
 from qbittorrent.qbittorrent import QBitTorrent
-from pyassert import *
+from pyassert import assert_that
 from mock import MagicMock, patch, ANY, DEFAULT
 from requests.auth import HTTPDigestAuth
 
@@ -12,6 +12,7 @@ def test_get_torrents_should_call_get():
 
     sut.__GET__.assert_called_with("/json/torrents")
 
+
 def test_resume_should_call_post():
 
     sut = QBitTorrent("admin", "adminadmin")
@@ -19,7 +20,7 @@ def test_resume_should_call_post():
 
     sut.resume("ahash")
 
-    sut.__POST__.assert_called_with("/command/resume",hash="ahash")
+    sut.__POST__.assert_called_with("/command/resume", hash="ahash")
 
 
 def test_active_downloads_should_call_gettorrents():
@@ -56,4 +57,3 @@ def test_get_torrents_should_call_the_correct_endpoint(mock):
 
     rv.raise_for_status.assert_called_with()
     mock.assert_called_with(ANY, auth=ANY)
-
