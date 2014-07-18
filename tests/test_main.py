@@ -1,15 +1,12 @@
-from qbittorrent.main import main
+from qbittorrent.main import main, parse_args
 from pyassert import assert_that
-from mock import patch
+from mock import patch, ANY, DEFAULT
 
-
-@patch('qbittorrent.qbittorrent.QBitTorrent', autospec=True)
-def test_should_run_with_default_params(mock):
-    instance = mock.return_value
-    instance.getTorrents.return_value = []
-    instance.activeDownloads.return_value = []
-
-    v = main([])
-    instance.getTorrents.assert_called_with()
-    instance.activeDownloads.assert_called_with()
-    assert_that(v).is_equal_to(0)
+@patch('qbittorrent.main.listTorrentsCommand', autospec=True)
+def test_should_run_list_command(mock):
+    def side_effect(a):
+        assert_that(a.state).is_equal_to("downloading")
+        return DEFAULT
+    mock.side_effect = side_effect
+    main(["list"])
+    mock.assert_called_with(ANY)

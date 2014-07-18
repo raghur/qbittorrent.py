@@ -39,6 +39,26 @@ def parse_args(argv):
                         help="Log level: INFO,DEBUG,CRITICAL,WARNING",
                         dest="verbosity",
                         default="INFO")
+
+    subparsers = parser.add_subparsers(help = "sub command help")
+    listCommand = subparsers.add_parser("list", help="lists torrents")
+    listCommand.add_argument("-s",
+                             "--state",
+                            choices=[
+                                    "error",
+                                    "pausedUP",
+                                    "pausedDL",
+                                    "queuedUP",
+                                    "queuedDL",
+                                    "uploading",
+                                    "stalledUP",
+                                    "stalledDL",
+                                    "checkingUP",
+                                    "checkingDL",
+                                    "downloading"
+                            ],
+                            default="downloading")
+    listCommand.set_defaults(func=listTorrentsCommand)
     config = os.path.expanduser("~/.qbittorrent.py")
     if (os.path.exists(config)):
         logger.debug("include config file", config)
@@ -64,11 +84,20 @@ def main(arglist):
 
     """
     args = parse_args(arglist)
-    qb = qbittorrent.QBitTorrent(args.user, args.password, args.host, args.port)
+    print "func value: ", args.func
+    return args.func(args)
+
+
+def listTorrentsCommand(args):
+    """@todo: Docstring for listTorrentsCommand.
+
+    :arg1: @todo
+    :returns: @todo
+
+    """
     try:
-        print "List of torrents: ", qb.getTorrents()
-        print "Active downloads: ", qb.activeDownloads()
-        return 0
+        qb = qbittorrent.QBitTorrent(args.user, args.password, args.host, args.port)
+        return qb.getTorrents(args.state)
     except requests.ConnectionError, e:
         print e
         return -1
