@@ -19,7 +19,7 @@ setup(name="qbittorrent.py",
       ],
       entry_points = {
           'console_scripts': [
-              'qbittorrent-cli = qbittorrent.main:main'
+              'qbittorrent-cli = qbittorrent.main:sysmain'
           ]
       },
       long_description='see https://github.org/raghur/qBittorrent.py',

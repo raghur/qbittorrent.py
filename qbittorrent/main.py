@@ -87,6 +87,10 @@ def main(arglist):
     return args.func(args)
 
 
+def sysmain():
+    return main(sys.argv[1:])
+
+
 def listTorrentsCommand(args):
     """@todo: Docstring for listTorrentsCommand.
 
@@ -99,11 +103,12 @@ def listTorrentsCommand(args):
                                      args.password,
                                      args.host,
                                      args.port)
-        return qb.getTorrents(args.state)
+        for t in qb.getTorrents(args.state):
+            print t
     except requests.ConnectionError, e:
         print e
         return -1
 
 if __name__ == '__main__':
-    v = main(sys.argv[1:])
+    v = sysmain()
     exit(v)
