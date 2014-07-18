@@ -1,6 +1,10 @@
 import requests
 from requests.auth import HTTPDigestAuth
-import urlparse
+try:
+    from urlparse import urljoin
+except ImportError:
+    from urllib.parse import urljoin
+
 import itertools
 import logging
 logger = logging.getLogger()
@@ -34,7 +38,7 @@ class QBitTorrent(object):
         :returns: @todo
 
         """
-        url = urlparse.urljoin(self._url, url)
+        url = urljoin(self._url, url)
         logger.debug("POST: %s", url)
         requests.post(url, kwargs, auth=self._auth)
 
@@ -45,7 +49,7 @@ class QBitTorrent(object):
         :returns: @todo
 
         """
-        url = urlparse.urljoin(self._url, url)
+        url = urljoin(self._url, url)
         logger.debug("GET: %s", url)
         r = requests.get(url, auth=self._auth)
         r.raise_for_status()
@@ -97,4 +101,4 @@ class QBitTorrent(object):
 
 if __name__ == '__main__':
     qb = QBitTorrent("admin", "adminadmin")
-    print qb.getTorrents()
+    print(qb.getTorrents())

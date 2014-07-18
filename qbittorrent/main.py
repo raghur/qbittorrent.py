@@ -104,9 +104,9 @@ def listTorrentsCommand(args):
                                      args.host,
                                      args.port)
         for t in qb.getTorrents(args.state):
-            print t
-    except requests.ConnectionError, e:
-        print e
+            print(t)
+    except requests.ConnectionError as e:
+        print(e)
         return -1
 
 if __name__ == '__main__':
