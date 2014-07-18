@@ -38,7 +38,7 @@ def parse_args(argv):
                         "--verbose",
                         help="Log level: INFO,DEBUG,CRITICAL,WARNING",
                         dest="verbosity",
-                        default="INFO")
+                        default="CRITICAL")
 
     subparsers = parser.add_subparsers(help="sub command help")
     listCommand = subparsers.add_parser("list", help="lists torrents")
@@ -84,7 +84,6 @@ def main(arglist):
 
     """
     args = parse_args(arglist)
-    print "func value: ", args.func
     return args.func(args)
 
 
