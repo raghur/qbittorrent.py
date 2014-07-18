@@ -1,6 +1,7 @@
 .ropeproject
 *.pyc
 ENV
+.venv/
 .coverage
 _virtualenv/
 coverage
