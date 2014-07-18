@@ -42,23 +42,33 @@ def parse_args(argv):
 
     subparsers = parser.add_subparsers(help="sub command help")
     listCommand = subparsers.add_parser("list", help="lists torrents")
-    listCommand.add_argument("-s",
-                             "--state",
-                             choices=[
-                                 "error",
-                                 "pausedUP",
-                                 "pausedDL",
-                                 "queuedUP",
-                                 "queuedDL",
-                                 "uploading",
-                                 "stalledUP",
-                                 "stalledDL",
-                                 "checkingUP",
-                                 "checkingDL",
-                                 "downloading"
-                             ],
-                             default="downloading")
+    add_state_argument(listCommand)
     listCommand.set_defaults(func=listTorrentsCommand)
+
+    pauseCommand = subparsers.add_parser("pause", help="pause torrent")
+    g = pauseCommand.add_mutually_exclusive_group(required=True)
+    g.add_argument("-t",
+                   "--torrents",
+                   nargs="+")
+    add_state_argument(g)
+    pauseCommand.set_defaults(func=pauseTorrentsCommand)
+
+    resumeCommand = subparsers.add_parser("resume", help="resume torrent")
+    g = resumeCommand.add_mutually_exclusive_group(required=True)
+    g.add_argument("-t",
+                   "--torrents",
+                   nargs="+")
+    add_state_argument(g)
+    resumeCommand.set_defaults(func=resumeTorrentsCommand)
+
+    queueCommand = subparsers.add_parser("queue", help="manage queue")
+    queueCommand.add_argument("torrent", nargs=1)
+    queueCommand.add_argument("-a",
+                              "--action",
+                              required=True,
+                              choices=["up", "down", "top", "bottom"])
+    queueCommand.set_defaults(func=manageQueueCommand)
+
     config = os.path.expanduser("~/.qbittorrent.py")
     if (os.path.exists(config)):
         logger.debug("include config file", config)
@@ -76,6 +86,25 @@ def parse_args(argv):
     return args
 
 
+def add_state_argument(command):
+    command.add_argument("-s",
+                         "--state",
+                         choices=[
+                             "error",
+                             "pausedUP",
+                             "pausedDL",
+                             "queuedUP",
+                             "queuedDL",
+                             "uploading",
+                             "stalledUP",
+                             "stalledDL",
+                             "checkingUP",
+                             "checkingDL",
+                             "downloading"
+                         ],
+                         default="downloading")
+
+
 def main(arglist):
     """@todo: Docstring for main.
 
@@ -89,6 +118,18 @@ def main(arglist):
 
 def sysmain():
     return main(sys.argv[1:])
+
+
+def resumeTorrentsCommand(args):
+    pass
+
+
+def manageQueueCommand(args):
+    pass
+
+
+def pauseTorrentsCommand(args):
+    pass
 
 
 def listTorrentsCommand(args):
