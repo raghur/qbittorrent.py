@@ -40,24 +40,24 @@ def parse_args(argv):
                         dest="verbosity",
                         default="INFO")
 
-    subparsers = parser.add_subparsers(help = "sub command help")
+    subparsers = parser.add_subparsers(help="sub command help")
     listCommand = subparsers.add_parser("list", help="lists torrents")
     listCommand.add_argument("-s",
                              "--state",
-                            choices=[
-                                    "error",
-                                    "pausedUP",
-                                    "pausedDL",
-                                    "queuedUP",
-                                    "queuedDL",
-                                    "uploading",
-                                    "stalledUP",
-                                    "stalledDL",
-                                    "checkingUP",
-                                    "checkingDL",
-                                    "downloading"
-                            ],
-                            default="downloading")
+                             choices=[
+                                 "error",
+                                 "pausedUP",
+                                 "pausedDL",
+                                 "queuedUP",
+                                 "queuedDL",
+                                 "uploading",
+                                 "stalledUP",
+                                 "stalledDL",
+                                 "checkingUP",
+                                 "checkingDL",
+                                 "downloading"
+                             ],
+                             default="downloading")
     listCommand.set_defaults(func=listTorrentsCommand)
     config = os.path.expanduser("~/.qbittorrent.py")
     if (os.path.exists(config)):
@@ -96,7 +96,10 @@ def listTorrentsCommand(args):
 
     """
     try:
-        qb = qbittorrent.QBitTorrent(args.user, args.password, args.host, args.port)
+        qb = qbittorrent.QBitTorrent(args.user,
+                                     args.password,
+                                     args.host,
+                                     args.port)
         return qb.getTorrents(args.state)
     except requests.ConnectionError, e:
         print e
