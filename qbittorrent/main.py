@@ -121,14 +121,17 @@ def sysmain():
 
 
 def resumeTorrentsCommand(args):
+    logger.debug(args)
     pass
 
 
 def manageQueueCommand(args):
+    logger.debug(args)
     pass
 
 
 def pauseTorrentsCommand(args):
+    logger.debug(args)
     pass
 
 
