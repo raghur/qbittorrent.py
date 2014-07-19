@@ -86,7 +86,7 @@ def parse_args(argv):
     return args
 
 
-def add_state_argument(command):
+def add_state_argument(command, default=None):
     command.add_argument("-s",
                          "--state",
                          choices=[
@@ -102,7 +102,7 @@ def add_state_argument(command):
                              "checkingDL",
                              "downloading"
                          ],
-                         default="downloading")
+                         default=default)
 
 
 def main(arglist):
