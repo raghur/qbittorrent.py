@@ -55,14 +55,13 @@ class QBitTorrent(object):
         r.raise_for_status()
         return r.json()
 
-    def resume(self, hash):
-        """@todo: Docstring for resume.
+    def resume(self, *args):
+        for hash in args:
+            self.__POST__("/command/resume", hash=hash)
 
-        :hash: @todo
-        :returns: @todo
-
-        """
-        return self.__POST__("/command/resume", hash=hash)
+    def pause(self, *args):
+        for hash in args:
+            self.__POST__("/command/pause", hash=hash)
 
     def getTorrents(self, filter=None):
         """@todo: Docstring for getTorrentList.
@@ -79,25 +78,25 @@ class QBitTorrent(object):
         else:
             return l
 
-    def activeDownloads(self):
-        """@todo: Docstring for hasActiveDownloads.
+    def resumeTorrents(self, state=None, hashes=None):
+        """@todo: Docstring for resumeTorrents.
         :returns: @todo
 
         """
-        try:
-            f = self.getTorrents('downloading')
-            return generator_len(f)
-        except StopIteration:
-            return 0
+        if (hashes):
+            self.resume(hashes)
+        elif (state):
+            torrents = self.getTorrents(state)
+            hashes = map(lambda x: x["hash"], torrents)
+            self.resume(hashes)
 
-    def resumeDownloads(self):
-        """@todo: Docstring for resumeDownloads.
-        :returns: @todo
-
-        """
-        pausedDls = self.getTorrents('pausedDL')
-        for torrent in pausedDls:
-            self.resume(torrent.hash)
+    def pauseTorrents(self, state=None, hashes=None):
+        if (hashes):
+            self.pause(hashes)
+        elif(state):
+            torrents = self.getTorrents(state)
+            hashes = map(lambda x: x["hash"], torrents)
+            self.pause(hashes)
 
 if __name__ == '__main__':
     qb = QBitTorrent("admin", "adminadmin")

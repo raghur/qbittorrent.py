@@ -3,6 +3,7 @@ import sys
 import os
 import argparse
 import requests
+import json
 
 import logging
 logger = logging.getLogger()
@@ -43,6 +44,8 @@ def parse_args(argv):
     subparsers = parser.add_subparsers(help="sub command help")
     listCommand = subparsers.add_parser("list", help="lists torrents")
     add_state_argument(listCommand)
+    listCommand.add_argument("-f", "--format", choices=["json", "csv"],
+                             default="csv")
     listCommand.set_defaults(func=listTorrentsCommand)
 
     pauseCommand = subparsers.add_parser("pause", help="pause torrent")
@@ -122,7 +125,14 @@ def sysmain():
 
 def resumeTorrentsCommand(args):
     logger.debug(args)
-    pass
+    if args.state:
+        return doQbitTorrentCall(
+            args,
+            lambda qb: qb.resumeTorrents(state=args.state))
+    else:
+        return doQbitTorrentCall(
+            args,
+            lambda qb: qb.resumeTorrents(hashes=args.torrents))
 
 
 def manageQueueCommand(args):
@@ -132,26 +142,37 @@ def manageQueueCommand(args):
 
 def pauseTorrentsCommand(args):
     logger.debug(args)
-    pass
+    if args.state:
+        return doQbitTorrentCall(
+            args,
+            lambda qb: qb.pauseTorrents(state=args.state))
+    else:
+        return doQbitTorrentCall(
+            args,
+            lambda qb: qb.pauseTorrents(hashes=args.torrents))
 
 
 def listTorrentsCommand(args):
-    """@todo: Docstring for listTorrentsCommand.
+    def action(qb):
+        for t in qb.getTorrents(args.state):
+            if (args.format == "json"):
+                print(json.dumps(t, sort_keys=True, indent=2))
+            elif (args.format == "csv"):
+                print(",".join([unicode(i) for i in t.values()]))
+    return doQbitTorrentCall(args, action)
 
-    :arg1: @todo
-    :returns: @todo
 
-    """
+def doQbitTorrentCall(args, action):
     try:
         qb = qbittorrent.QBitTorrent(args.user,
                                      args.password,
                                      args.host,
                                      args.port)
-        for t in qb.getTorrents(args.state):
-            print(t)
+        return action(qb)
     except requests.ConnectionError as e:
-        print(e)
+        logger.error(e)
         return -1
+
 
 if __name__ == '__main__':
     v = sysmain()

@@ -23,16 +23,6 @@ def test_resume_should_call_post():
     sut.__POST__.assert_called_with("/command/resume", hash="ahash")
 
 
-def test_active_downloads_should_call_gettorrents():
-
-    sut = QBitTorrent("admin", "adminadmin")
-    sut.getTorrents = MagicMock(name="getTorrents")
-
-    sut.activeDownloads()
-
-    sut.getTorrents.assert_called_with("downloading")
-
-
 @patch('requests.get', autospec=True)
 def test_get_torrents_should_call_the_correct_endpoint(mock):
     sut = QBitTorrent("admin", "adminadmin")
