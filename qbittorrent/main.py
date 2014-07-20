@@ -43,7 +43,7 @@ def parse_args(argv):
 
     subparsers = parser.add_subparsers(help="sub command help")
     listCommand = subparsers.add_parser("list", help="lists torrents")
-    add_state_argument(listCommand)
+    add_state_argument(listCommand, positional=True)
     listCommand.add_argument("-f", "--format", choices=["json", "csv"],
                              default="csv")
     listCommand.set_defaults(func=listTorrentsCommand)
@@ -89,23 +89,31 @@ def parse_args(argv):
     return args
 
 
-def add_state_argument(command, default=None):
-    command.add_argument("-s",
-                         "--state",
-                         choices=[
-                             "error",
-                             "pausedUP",
-                             "pausedDL",
-                             "queuedUP",
-                             "queuedDL",
-                             "uploading",
-                             "stalledUP",
-                             "stalledDL",
-                             "checkingUP",
-                             "checkingDL",
-                             "downloading"
-                         ],
-                         default=default)
+def add_state_argument(command, default=None, positional=False):
+    choices = [
+        "error",
+        "pausedUP",
+        "pausedDL",
+        "queuedUP",
+        "queuedDL",
+        "uploading",
+        "stalledUP",
+        "stalledDL",
+        "checkingUP",
+        "checkingDL",
+        "downloading"
+    ]
+    if positional:
+        command.add_argument("state",
+                             choices=choices,
+                             nargs="*",
+                             default="downloading")
+    else:
+        command.add_argument("-s",
+                             "--state",
+                             choices=choices,
+                             nargs="*",
+                             default=default)
 
 
 def main(arglist):

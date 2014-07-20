@@ -6,7 +6,7 @@ from mock import patch, ANY, DEFAULT
 @patch('qbittorrent.main.listTorrentsCommand', autospec=True)
 def test_should_run_list_command(mock):
     def side_effect(a):
-        assert_that(a.state).is_equal_to(None)
+        assert_that(a.state).is_equal_to("downloading")
         return DEFAULT
     mock.side_effect = side_effect
     main(["list"])
@@ -16,17 +16,17 @@ def test_should_run_list_command(mock):
 @patch('qbittorrent.main.listTorrentsCommand', autospec=True)
 def test_should_run_list_command_with_explicit_filter(mock):
     def side_effect(a):
-        assert_that(a.state).is_equal_to("uploading")
+        assert_that(a.state).is_equal_to(["uploading"])
         return DEFAULT
     mock.side_effect = side_effect
-    main(["list", "--state", "uploading"])
+    main(["list", "uploading"])
     mock.assert_called_with(ANY)
 
 
 @patch('qbittorrent.main.pauseTorrentsCommand', autospec=True)
 def test_should_run_pause_by_state(mock):
     def side_effect(a):
-        assert_that(a.state).is_equal_to("stalledUP")
+        assert_that(a.state).is_equal_to(["stalledUP"])
         return DEFAULT
     mock.side_effect = side_effect
     main("pause -s stalledUP".split(" "))
@@ -46,7 +46,7 @@ def test_should_run_pause_by_torrentlist(mock):
 @patch('qbittorrent.main.resumeTorrentsCommand', autospec=True)
 def test_should_resume_by_state(mock):
     def side_effect(a):
-        assert_that(a.state).is_equal_to("stalledUP")
+        assert_that(a.state).is_equal_to(["stalledUP"])
         return DEFAULT
     mock.side_effect = side_effect
     main("resume -s stalledUP".split(" "))

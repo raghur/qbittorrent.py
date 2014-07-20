@@ -47,8 +47,8 @@ class QBitTorrent(object):
 
         :url: @todo
         :returns: @todo
-
         """
+
         url = urljoin(self._url, url)
         logger.debug("GET: %s", url)
         r = requests.get(url, auth=self._auth)
@@ -63,14 +63,34 @@ class QBitTorrent(object):
         for hash in args:
             self.__POST__("/command/pause", hash=hash)
 
+    def delete(self, hashes, deleteData=False):
+        if deleteData:
+            uri = "/command/deletePerm"
+        else:
+            uri = "/command/delete"
+        return self.__POST__(uri, hashes="|".join(hashes))
+
+    def increasePriority(self, hashes):
+        return self.__POST__("/command/increasePrio", hashes="|".join(hashes))
+
+    def decreasePriority(self, action, hashes):
+        return self.__POST__("/command/decreasePrio", hashes="|".join(hashes))
+
+    def maxPriority(self, hashes):
+        return self.__POST__("/command/topPrio", hashes="|".join(hashes))
+
+    def minPriority(self, hashes):
+        return self.__POST__("/command/bottomPrio", hashes="|".join(hashes))
+
     def getTorrents(self, filter=None):
         """@todo: Docstring for getTorrentList.
         :returns: @todo
-
         """
         l = self.__GET__("/json/torrents")
         if callable(filter):
             return itertools.ifilter(filter, l)
+        elif isinstance(filter, list):
+            return itertools.ifilter(lambda x: x["state"] in filter, l)
         elif isinstance(filter, str):
             return itertools.ifilter(lambda x: x["state"] == filter, l)
         elif isinstance(filter, tuple):
@@ -96,7 +116,7 @@ class QBitTorrent(object):
         elif(state):
             torrents = self.getTorrents(state)
             hashes = map(lambda x: x["hash"], torrents)
-            self.pause(hashes)
+            self.pause(*hashes)
 
 if __name__ == '__main__':
     qb = QBitTorrent("admin", "adminadmin")

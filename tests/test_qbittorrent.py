@@ -47,3 +47,26 @@ def test_get_torrents_should_call_the_correct_endpoint(mock):
 
     rv.raise_for_status.assert_called_with()
     mock.assert_called_with(ANY, auth=ANY)
+
+
+def test_pause_should_call_post():
+    sut = QBitTorrent("admin", "adminadmin")
+    sut.__POST__ = MagicMock(name="post")
+
+    sut.pause("ahash")
+
+    sut.__POST__.assert_called_with("/command/pause", hash="ahash")
+
+
+def test_pauseTorrents_by_state():
+    sut = QBitTorrent("admin", "adminadmin")
+    sut.__POST__ = MagicMock(name="post")
+    sut.getTorrents = MagicMock(name="getTorrents")
+    sut.getTorrents.return_value = [
+        {"hash": "a"}, {"hash": "b"}, {"hash": "c"}
+    ]
+
+    sut.pauseTorrents(state="downloading")
+
+    sut.getTorrents.assert_called_with("downloading")
+    assert_that(sut.__POST__.call_count).is_equal_to(3)
