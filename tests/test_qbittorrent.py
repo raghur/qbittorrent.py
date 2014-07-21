@@ -1,4 +1,4 @@
-from qbittorrent.qbittorrent import QBitTorrent
+from qbittorrent.qbittorrent import QBitTorrent, generator_len
 from pyassert import assert_that
 from mock import MagicMock, patch, ANY, DEFAULT
 from requests.auth import HTTPDigestAuth
@@ -21,10 +21,8 @@ def test_get_torrents_should_filter_by_func():
         {"state": "pausedDL"}
     ])
 
-    print(sut.__GET__.return_value)
     torrents = sut.getTorrents(lambda x: x["state"] == "downloading")
-    l = [t for t in torrents]
-    assert_that(len(l)).is_equal_to(1)
+    assert_that(generator_len(torrents)).is_equal_to(1)
     sut.__GET__.assert_called_with("/json/torrents")
 
 
@@ -38,7 +36,7 @@ def test_get_torrents_should_filter_by_state():
 
     torrents = sut.getTorrents("downloading")
 
-    assert_that(len([t for t in torrents])).is_equal_to(1)
+    assert_that(generator_len(torrents)).is_equal_to(1)
     sut.__GET__.assert_called_with("/json/torrents")
 
 
@@ -52,7 +50,7 @@ def test_get_torrents_should_filter_by_multiple_states():
 
     torrents = sut.getTorrents(["downloading", "pausedDL"])
 
-    assert_that(len([t for t in torrents])).is_equal_to(2)
+    assert_that(generator_len(torrents)).is_equal_to(2)
     sut.__GET__.assert_called_with("/json/torrents")
 
 
@@ -66,7 +64,7 @@ def test_get_torrents_should_filter_by_tuple():
 
     torrents = sut.getTorrents(("name", "nameA"))
 
-    assert_that(len([t for t in torrents])).is_equal_to(1)
+    assert_that(generator_len(torrents)).is_equal_to(1)
     sut.__GET__.assert_called_with("/json/torrents")
 
 
