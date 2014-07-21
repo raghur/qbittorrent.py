@@ -7,3 +7,4 @@ _virtualenv/
 coverage
 *.egg-info/
 .tox/
+coverhtml/
