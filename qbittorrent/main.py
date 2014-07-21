@@ -105,9 +105,9 @@ def add_state_argument(command, default=None, positional=False):
     ]
     if positional:
         command.add_argument("state",
-                             choices=choices,
+                             choices=choices.append([""]),
                              nargs="*",
-                             default="downloading")
+                             default="")
     else:
         command.add_argument("-s",
                              "--state",
@@ -162,7 +162,8 @@ def pauseTorrentsCommand(args):
 
 def listTorrentsCommand(args):
     def action(qb):
-        for t in qb.getTorrents(args.state):
+        filter = args.state if args.state != "" else None
+        for t in qb.getTorrents(filter):
             if (args.format == "json"):
                 print(json.dumps(t, sort_keys=True, indent=2))
             elif (args.format == "csv"):
