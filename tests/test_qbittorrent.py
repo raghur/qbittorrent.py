@@ -13,6 +13,63 @@ def test_get_torrents_should_call_get():
     sut.__GET__.assert_called_with("/json/torrents")
 
 
+def test_get_torrents_should_filter_by_func():
+    sut = QBitTorrent("admin", "adminadmin")
+    sut.__GET__ = MagicMock(name='__GET__')
+    sut.__GET__.return_value = list([
+        {"state": "downloading"},
+        {"state": "pausedDL"}
+    ])
+
+    print(sut.__GET__.return_value)
+    torrents = sut.getTorrents(lambda x: x["state"] == "downloading")
+    l = [t for t in torrents]
+    assert_that(len(l)).is_equal_to(1)
+    sut.__GET__.assert_called_with("/json/torrents")
+
+
+def test_get_torrents_should_filter_by_state():
+    sut = QBitTorrent("admin", "adminadmin")
+    sut.__GET__ = MagicMock(name='__GET__')
+    sut.__GET__.return_value = [
+        {"state": "downloading"},
+        {"state": "pausedDL"}
+    ]
+
+    torrents = sut.getTorrents("downloading")
+
+    assert_that(len([t for t in torrents])).is_equal_to(1)
+    sut.__GET__.assert_called_with("/json/torrents")
+
+
+def test_get_torrents_should_filter_by_multiple_states():
+    sut = QBitTorrent("admin", "adminadmin")
+    sut.__GET__ = MagicMock(name='__GET__')
+    sut.__GET__.return_value = [
+        {"state": "downloading"},
+        {"state": "pausedDL"}
+    ]
+
+    torrents = sut.getTorrents(["downloading", "pausedDL"])
+
+    assert_that(len([t for t in torrents])).is_equal_to(2)
+    sut.__GET__.assert_called_with("/json/torrents")
+
+
+def test_get_torrents_should_filter_by_tuple():
+    sut = QBitTorrent("admin", "adminadmin")
+    sut.__GET__ = MagicMock(name='__GET__')
+    sut.__GET__.return_value = [
+        {"state": "downloading", "name": "nameA"},
+        {"state": "pausedDL", "name": "nameB"}
+    ]
+
+    torrents = sut.getTorrents(("name", "nameA"))
+
+    assert_that(len([t for t in torrents])).is_equal_to(1)
+    sut.__GET__.assert_called_with("/json/torrents")
+
+
 def test_resume_should_call_post():
 
     sut = QBitTorrent("admin", "adminadmin")
@@ -70,3 +127,53 @@ def test_pauseTorrents_by_state():
 
     sut.getTorrents.assert_called_with("downloading")
     assert_that(sut.__POST__.call_count).is_equal_to(3)
+
+
+def test_pauseTorrents_by_hashlist():
+    sut = QBitTorrent("admin", "adminadmin")
+    sut.__POST__ = MagicMock(name="post")
+
+    sut.pauseTorrents(hashes=["2", "3", "4"])
+
+    assert_that(sut.__POST__.call_count).is_equal_to(3)
+
+
+def test_resumeTorrents_by_state():
+    sut = QBitTorrent("admin", "adminadmin")
+    sut.__POST__ = MagicMock(name="post")
+    sut.getTorrents = MagicMock(name="getTorrents")
+    sut.getTorrents.return_value = [
+        {"hash": "a"}, {"hash": "b"}, {"hash": "c"}
+    ]
+
+    sut.resumeTorrents(state="downloading")
+
+    sut.getTorrents.assert_called_with("downloading")
+    assert_that(sut.__POST__.call_count).is_equal_to(3)
+
+
+def test_resumeTorrents_by_hashlist():
+    sut = QBitTorrent("admin", "adminadmin")
+    sut.__POST__ = MagicMock(name="post")
+
+    sut.resumeTorrents(hashes=["2", "3", "4"])
+
+    assert_that(sut.__POST__.call_count).is_equal_to(3)
+
+
+def test_delete_should_call_post():
+    sut = QBitTorrent("admin", "adminadmin")
+    sut.__POST__ = MagicMock(name="post")
+
+    sut.delete(False, "ahash", "another")
+
+    sut.__POST__.assert_called_with("/command/delete", hashes="ahash|another")
+
+
+def test_deleteperm_should_call_post():
+    sut = QBitTorrent("admin", "adminadmin")
+    sut.__POST__ = MagicMock(name="post")
+
+    sut.delete(True, "ahash", "another")
+
+    sut.__POST__.assert_called_with("/command/deletePerm", hashes="ahash|another")

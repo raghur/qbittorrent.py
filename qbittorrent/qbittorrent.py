@@ -63,12 +63,13 @@ class QBitTorrent(object):
         for hash in args:
             self.__POST__("/command/pause", hash=hash)
 
-    def delete(self, hashes, deleteData=False):
+    def delete(self, deleteData=False, *args):
+        print(args)
         if deleteData:
             uri = "/command/deletePerm"
         else:
             uri = "/command/delete"
-        return self.__POST__(uri, hashes="|".join(hashes))
+        return self.__POST__(uri, hashes="|".join(args))
 
     def increasePriority(self, hashes):
         return self.__POST__("/command/increasePrio", hashes="|".join(hashes))
@@ -104,15 +105,15 @@ class QBitTorrent(object):
 
         """
         if (hashes):
-            self.resume(hashes)
+            self.resume(*hashes)
         elif (state):
             torrents = self.getTorrents(state)
             hashes = map(lambda x: x["hash"], torrents)
-            self.resume(hashes)
+            self.resume(*hashes)
 
     def pauseTorrents(self, state=None, hashes=None):
         if (hashes):
-            self.pause(hashes)
+            self.pause(*hashes)
         elif(state):
             torrents = self.getTorrents(state)
             hashes = map(lambda x: x["hash"], torrents)
