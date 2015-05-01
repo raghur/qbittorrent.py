@@ -167,7 +167,7 @@ def listTorrentsCommand(args):
             if (args.format == "json"):
                 print(json.dumps(t, sort_keys=True, indent=2))
             elif (args.format == "csv"):
-                print(",".join([unicode(i) for i in t.values()]))
+                print(u",".join([unicode(i) for i in t.values()]).encode('utf-8'))
     return doQbitTorrentCall(args, action)
 
 
