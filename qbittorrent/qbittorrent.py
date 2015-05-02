@@ -99,6 +99,17 @@ class QBitTorrent(object):
         else:
             return l
 
+    def getTorrentDetails(self, hashes):
+        """TODO: Docstring for getTorrentDetails.
+
+        :hashes: TODO
+        :returns: TODO
+
+        """
+        responses =  (self.__GET__("/json/propertiesGeneral/" + h)
+                     for h in hashes)
+        return itertools.izip(hashes, responses)
+
     def resumeTorrents(self, state=None, hashes=None):
         """@todo: Docstring for resumeTorrents.
         :returns: @todo

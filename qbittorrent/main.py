@@ -51,6 +51,14 @@ def parse_args(argv):
                              default="csv")
     listCommand.set_defaults(func=listTorrentsCommand)
 
+    detailsCommand = subparsers.add_parser(
+                    "details"
+                    , help="get details of torrent")
+    detailsCommand.add_argument("-t",
+                   "--torrents",
+                   nargs="+")
+    detailsCommand.set_defaults(func=listTorrentDetailsCommand)
+
     pauseCommand = subparsers.add_parser("pause", help="pause torrent")
     g = pauseCommand.add_mutually_exclusive_group(required=True)
     g.add_argument("-t",
@@ -173,6 +181,14 @@ def listTorrentsCommand(args):
                 print(u",".join([unicode(i) for i in t.values()])
                       .encode('utf-8'))
     return doQbitTorrentCall(args, action)
+
+
+def listTorrentDetailsCommand(args):
+    logger.debug(args)
+    response =  doQbitTorrentCall(
+        args,
+        lambda qb: qb.getTorrentDetails(hashes=args.torrents))
+    print([i for i in response])
 
 
 def doQbitTorrentCall(args, action):
