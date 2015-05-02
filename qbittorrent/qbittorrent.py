@@ -106,7 +106,7 @@ class QBitTorrent(object):
         :returns: TODO
 
         """
-        responses =  (self.__GET__("/json/propertiesGeneral/" + h)
+        responses = (self.__GET__("/json/propertiesGeneral/" + h)
                      for h in hashes)
         return itertools.izip(hashes, responses)
 

@@ -8,7 +8,8 @@ import json
 import logging
 # fix pipe error http://stackoverflow.com/a/16865106
 from signal import signal, SIGPIPE, SIG_DFL
-signal(SIGPIPE,SIG_DFL)
+
+signal(SIGPIPE, SIG_DFL)
 logger = logging.getLogger()
 logging.basicConfig(
     format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
@@ -52,11 +53,11 @@ def parse_args(argv):
     listCommand.set_defaults(func=listTorrentsCommand)
 
     detailsCommand = subparsers.add_parser(
-                    "details"
-                    , help="get details of torrent")
+        "details",
+        help="get details of torrent")
     detailsCommand.add_argument("-t",
-                   "--torrents",
-                   nargs="+")
+                                "--torrents",
+                                nargs="+")
     detailsCommand.set_defaults(func=listTorrentDetailsCommand)
 
     pauseCommand = subparsers.add_parser("pause", help="pause torrent")
@@ -185,7 +186,7 @@ def listTorrentsCommand(args):
 
 def listTorrentDetailsCommand(args):
     logger.debug(args)
-    response =  doQbitTorrentCall(
+    response = doQbitTorrentCall(
         args,
         lambda qb: qb.getTorrentDetails(hashes=args.torrents))
     print([i for i in response])
