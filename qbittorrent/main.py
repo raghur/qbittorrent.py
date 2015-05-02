@@ -6,6 +6,9 @@ import requests
 import json
 
 import logging
+# fix pipe error http://stackoverflow.com/a/16865106
+from signal import signal, SIGPIPE, SIG_DFL
+signal(SIGPIPE,SIG_DFL)
 logger = logging.getLogger()
 logging.basicConfig(
     format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
@@ -167,7 +170,8 @@ def listTorrentsCommand(args):
             if (args.format == "json"):
                 print(json.dumps(t, sort_keys=True, indent=2))
             elif (args.format == "csv"):
-                print(u",".join([unicode(i) for i in t.values()]).encode('utf-8'))
+                print(u",".join([unicode(i) for i in t.values()])
+                      .encode('utf-8'))
     return doQbitTorrentCall(args, action)
 
 
